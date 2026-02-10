@@ -45,6 +45,3 @@ case_info:
       type_jsonpath:
         token: $.data.token  # 提取token供后续用例复用
         openid: $.data.user.openid  # 提取openid供后续用例复用
-
--
-  id:

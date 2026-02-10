@@ -10,10 +10,10 @@
     *   支持多项目/多环境配置 (`config/*.yaml`)，通过 `${VAR}` 动态引用环境变量。
 *   多源用例生成与隔离:
     *   支持同时从 YAML 和 Excel 生成测试用例。
-    *   **生成隔离**: YAML 用例生成至 `testcases/test_auto_case/yaml_case/`，Excel 用例生成至 `testcases/test_auto_case/excel_case/`，便于分类管理。
-*   **多项目与多环境支持**:
+    *   生成隔离: YAML 用例生成至 `testcases/test_auto_case/yaml_case/`，Excel 用例生成至 `testcases/test_auto_case/excel_case/`，便于分类管理。
+*   多项目与多环境支持:
     *   通过 `-env <project_name>` 参数一键切换项目/环境配置。
-*   **其他特性**:
+*   其他特性:
     *   Session 会话自动关联
     *   动态参数提取与依赖注入 (JSONPath/Regex)
     *   Allure 定制化报告
@@ -115,13 +115,13 @@ python3 run.py
 
 ### 2. 常见运行场景
 
-**场景一：切换测试环境**
+场景一：切换测试环境
 ```bash
 # 运行 live 环境 (加载 config/live.yaml)
 python3 run.py -env live
 ```
 
-**场景二：只运行冒烟测试用例**
+场景二：只运行冒烟测试用例
 ```bash
 # 仅运行被标记为 smoke 的用例
 python3 run.py -m smoke
@@ -132,13 +132,13 @@ python3 run.py -m auto
 python3 run.py -m excel_case
 ```
 
-**场景三：CI/CD 流水线集成**
+场景三：CI/CD 流水线集成
 在流水线中通常不需要本地生成 HTML 报告 (由 Jenkins/GitLab CI 插件生成)，且需要非交互模式：
 ```bash
 python3 run.py -env test -report no
 ```
 
-**场景四：开启定时任务**
+场景四：开启定时任务
 ```bash
 # 开启定时任务执行
 python3 run.py -cron
@@ -216,8 +216,8 @@ case_info:
 
 ### 3. 自动生成说明
 *   运行 `run.py` 时，框架会自动扫描 `interfaces/` 下的文件。
-*   **YAML 文件**生成的测试代码存放于：`testcases/test_auto_case/yaml_case/`
-*   **Excel 文件**生成的测试代码存放于：`testcases/test_auto_case/excel_case/`
+*   YAML 文件生成的测试代码存放于：`testcases/test_auto_case/yaml_case/`
+*   Excel文件生成的测试代码存放于：`testcases/test_auto_case/excel_case/`
 
 ## 八、Excel 模板与示例
 
@@ -262,13 +262,6 @@ case_info:
 ```json
 { "Authorization": "Bearer ${token}" }
 ```
-
-### 2. 最小可运行示例
-示例文件位置（workspace 项目）：
-- [test_crm.xlsx](file:///Users/nidaye/DevolFiles/PythonProject/ApiAutotest/interfaces/projects/workspace/test_crm.xlsx)
-- [test_workspace_multi.xlsx](file:///Users/nidaye/DevolFiles/PythonProject/ApiAutotest/interfaces/projects/workspace/test_workspace_multi.xlsx)
-运行后会在 [excel_case](file:///Users/nidaye/DevolFiles/PythonProject/ApiAutotest/testcases/test_auto_case/excel_case) 生成对应测试代码（如 test_workspace_multi.py）。
-
 示例用例的标记：
 - 自动生成的测试函数默认带有 `@pytest.mark.auto` 与 `@pytest.mark.excel_case`
 - 可通过 `-m auto` 或 `-m excel_case` 进行筛选运行
@@ -318,32 +311,16 @@ run.py -env test -m auto
 
 ## 十、注意事项
 
-1.  **用例文件命名规范**:
-    *   **必须**以 `test` 开头（例如 `test_login.yaml`），否则框架无法自动识别并生成测试代码。
+1.  用例文件命名规范:
+    *   必须以 `test` 开头（例如 `test_login.yaml`），否则框架无法自动识别并生成测试代码。
     *   文件名建议使用下划线 `_` 分隔（例如 `test_user_info.yaml`）。如果包含连字符 `-`，框架会自动替换为 `_` 以符合 Python 命名规范。
 
-2.  **配置与安全**:
-    *   **环境配置文件**: 使用 `-env abc` 运行时，必须确保 `config/abc.yaml` 或 `config/abc.yml` 文件存在。
-    *   **敏感信息**: `.env` 文件包含数据库密码等敏感信息，**严禁提交到代码仓库**（`.gitignore` 已默认忽略）。请使用 `.env.example` 作为模板分发。
-    *   **不要在代码中硬编码密钥**（如 `settings.py` 中的账号/令牌），统一改用环境变量（`.env`）并在代码中读取。
-
-### 10.1 敏感信息迁移到 .env（推荐）
-- 建议将通知与账号配置统一迁移到环境变量：
-```properties
-# 邮件
-EMAIL_USER=your_email@example.com
-EMAIL_PASSWORD=your_app_password
-EMAIL_HOST=smtp.163.com
-EMAIL_TO=someone@example.com,other@example.com
-
-# 钉钉
-DING_TALK_WEBHOOK=https://oapi.dingtalk.com/robot/send?access_token=...
-DING_TALK_SECRET=SECxxxxxxxx
-
-# 企业微信
-WECHAT_WEBHOOK=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=...
-```
-- 使用时通过 `os.getenv()` 读取，避免在 `settings.py` 硬编码；`.env.example` 仅保留键名与示例占位值
+2.  配置与安全:
+    *   环境配置文件: 使用 `-env abc` 运行时，必须确保 `config/abc.yaml` 或 `config/abc.yml` 文件存在。
+    *   敏感信息: `.env` 文件包含数据库密码等敏感信息，**严禁提交到代码仓库**（`.gitignore` 已默认忽略）。请使用 `.env.example` 作为模板分发。
+    *   敏感信息迁移: 项目已将敏感配置（邮件、钉钉、数据库密码等）改为优先读取环境变量。
+        *   本地开发：请在 `.env` 文件中配置 `EMAIL_PASSWORD`, `DINGTALK_SECRET` 等。
+        *   CI/CD 环境：请在 GitHub Secrets 或 Jenkins Credentials 中配置对应变量，脚本会自动注入。
 
 3.  Excel 用例编写:
     *   数字类型: Excel 中的数字（如 `123`, `18600000000`）在读取时可能会被自动转换为整数或浮点数。对于手机号、身份证号等必须保持字符串格式的字段，建议在 Excel 中加单引号 `'`（如 `'13800138000`）或在代码层做强制类型转换。

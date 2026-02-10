@@ -13,6 +13,13 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+      EMAIL_TO_LIST: ${{ secrets.EMAIL_TO_LIST }}
+      DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+      DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+      WECHAT_WEBHOOK: ${{ secrets.WECHAT_WEBHOOK }}
       TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
       TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
       TEST_DB_HOST: ${{ secrets.TEST_DB_HOST }}
@@ -38,6 +45,13 @@ jobs:
       - name: Prepare .env from secrets (optional)
         run: |
           touch .env
+          [ -n "${EMAIL_USER}" ] && echo "EMAIL_USER=${EMAIL_USER}" >> .env || true
+          [ -n "${EMAIL_PASSWORD}" ] && echo "EMAIL_PASSWORD=${EMAIL_PASSWORD}" >> .env || true
+          [ -n "${EMAIL_HOST}" ] && echo "EMAIL_HOST=${EMAIL_HOST}" >> .env || true
+          [ -n "${EMAIL_TO_LIST}" ] && echo "EMAIL_TO_LIST=${EMAIL_TO_LIST}" >> .env || true
+          [ -n "${DINGTALK_WEBHOOK}" ] && echo "DINGTALK_WEBHOOK=${DINGTALK_WEBHOOK}" >> .env || true
+          [ -n "${DINGTALK_SECRET}" ] && echo "DINGTALK_SECRET=${DINGTALK_SECRET}" >> .env || true
+          [ -n "${WECHAT_WEBHOOK}" ] && echo "WECHAT_WEBHOOK=${WECHAT_WEBHOOK}" >> .env || true
           [ -n "${TEST_USERNAME}" ] && echo "TEST_USERNAME=${TEST_USERNAME}" >> .env || true
           [ -n "${TEST_PASSWORD}" ] && echo "TEST_PASSWORD=${TEST_PASSWORD}" >> .env || true
           [ -n "${TEST_DB_HOST}" ] && echo "TEST_DB_HOST=${TEST_DB_HOST}" >> .env || true
@@ -62,6 +76,13 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     env:
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+      EMAIL_TO_LIST: ${{ secrets.EMAIL_TO_LIST }}
+      DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+      DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+      WECHAT_WEBHOOK: ${{ secrets.WECHAT_WEBHOOK }}
       DEMO_HOST: ${{ secrets.DEMO_HOST }}
       DEMO_USERNAME: ${{ secrets.DEMO_USERNAME }}
       DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
@@ -88,6 +109,13 @@ jobs:
       - name: Prepare .env from secrets (optional)
         run: |
           touch .env
+          [ -n "${EMAIL_USER}" ] && echo "EMAIL_USER=${EMAIL_USER}" >> .env || true
+          [ -n "${EMAIL_PASSWORD}" ] && echo "EMAIL_PASSWORD=${EMAIL_PASSWORD}" >> .env || true
+          [ -n "${EMAIL_HOST}" ] && echo "EMAIL_HOST=${EMAIL_HOST}" >> .env || true
+          [ -n "${EMAIL_TO_LIST}" ] && echo "EMAIL_TO_LIST=${EMAIL_TO_LIST}" >> .env || true
+          [ -n "${DINGTALK_WEBHOOK}" ] && echo "DINGTALK_WEBHOOK=${DINGTALK_WEBHOOK}" >> .env || true
+          [ -n "${DINGTALK_SECRET}" ] && echo "DINGTALK_SECRET=${DINGTALK_SECRET}" >> .env || true
+          [ -n "${WECHAT_WEBHOOK}" ] && echo "WECHAT_WEBHOOK=${WECHAT_WEBHOOK}" >> .env || true
           [ -n "${DEMO_HOST}" ] && echo "DEMO_HOST=${DEMO_HOST}" >> .env || true
           [ -n "${DEMO_USERNAME}" ] && echo "DEMO_USERNAME=${DEMO_USERNAME}" >> .env || true
           [ -n "${DEMO_PASSWORD}" ] && echo "DEMO_PASSWORD=${DEMO_PASSWORD}" >> .env || true

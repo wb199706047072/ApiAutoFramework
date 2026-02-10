@@ -49,10 +49,10 @@ LOG_LEVEL_STD = "DEBUG"
 # ------------------------------------ 邮件配置信息 ----------------------------------------------------#
 # 发送邮件的相关配置信息
 email = {
-    "user": "18728441645@163.com",  # 发件人邮箱
-    "password": "RFUFJRLJHVYBYXWV",  # 发件人邮箱授权码
-    "host": "smtp.163.com",
-    "to": ["18728441645@163.com", "1125565732@qq.com"]  # 收件人邮箱
+    "user": os.getenv("EMAIL_USER"),
+    "password": os.getenv("EMAIL_PASSWORD"),
+    "host": os.getenv("EMAIL_HOST"),
+    "to": os.getenv("EMAIL_TO_LIST", "").split(",") if os.getenv("EMAIL_TO_LIST") else []
 }
 
 # ------------------------------------ 邮件通知内容 ----------------------------------------------------#
@@ -77,8 +77,8 @@ email_content = """
        """
 # ------------------------------------ 钉钉相关配置 ----------------------------------------------------#
 ding_talk = {
-    "webhook_url": "https://oapi.dingtalk.com/robot/send?access_token=15d5b81b7ebed4e5819c4ae110d5f99352033c5c01a37982cb8fc30484f6ba2a",
-    "secret": "SEC950a24f6218797aa0fd7a86593932fba5ab69efcfca933cc04872381236c63e8",
+    "webhook_url": os.getenv("DINGTALK_WEBHOOK"),
+    "secret": os.getenv("DINGTALK_SECRET"),
 }
 
 # ------------------------------------ 钉钉通知内容 ----------------------------------------------------#
@@ -170,4 +170,3 @@ ALLURE_RESULTS_DIR = os.path.join(REPORT_DIR, "allure_results")
 ALLURE_HTML_DIR = os.path.join(REPORT_DIR, "allure_html")
 # Allure报告，配置文件目录
 ALLURE_CONFIG_DIR = os.path.join(LIB_DIR, "allure_config")
-
