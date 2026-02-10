@@ -1,0 +1,43 @@
+# -*- coding: utf-8 -*-
+# @Time    : ${DATE} ${TIME}
+# @Author  : 会飞的🐟
+# @File    : ${NAME}.py
+# @Software: ${PRODUCT_NAME}
+# @Desc: 
+
+import pytest
+import allure
+from loguru import logger
+from config.settings import GLOBAL_VARS
+from core.requests_utils.request_control import RequestControl
+from core.requests_utils.case_dependence import CaseDependenceHandler
+# 公共依赖
+dependence_handler = CaseDependenceHandler(GLOBAL_VARS)
+
+# 用例数据
+cases = ${case_data}
+@allure.epic("${epic}")
+@allure.feature("${feature}")
+@allure.story("${story}")
+@pytest.mark.auto
+${markers}
+@pytest.mark.parametrize("case", cases, ids=lambda x: x["title"])
+def ${func_title}_auto(case):
+    # 前置依赖处理
+    if case.get("case_dependence") and case["case_dependence"].get("setup"):
+        dependence_results = dependence_handler.case_dependence_handle(
+            case_dependence=case["case_dependence"]["setup"],
+            db_info=GLOBAL_VARS["db_info"])
+        GLOBAL_VARS.update(dependence_results if dependence_results else {})
+    # 处理请求前的用例数据 -> 发送请求 -> 响应/数据库断言 -> 断言成功后进行参数提取
+    if GLOBAL_VARS.get("db_info"):
+        res = RequestControl().api_request_flow(request_data=case, global_var=GLOBAL_VARS, db_info=GLOBAL_VARS["db_info"])
+    else:
+        res = RequestControl().api_request_flow(request_data=case, global_var=GLOBAL_VARS)
+    GLOBAL_VARS.update(res)
+    # 后置依赖处理
+    if case.get("case_dependence") and case["case_dependence"].get("teardown"):
+        dependence_results = dependence_handler.case_dependence_handle(
+            case_dependence=case["case_dependence"]["teardown"],
+            db_info=GLOBAL_VARS["db_info"])
+        GLOBAL_VARS.update(dependence_results if dependence_results else {})

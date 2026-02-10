@@ -1,0 +1,46 @@
+# Python compilation
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE settings
+.idea/
+.vscode/
+.trae/
+*.swp
+*.swo
+
+# macOS system files
+.DS_Store
+
+# Test results and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# Project outputs (logs, reports)
+outputs/
+logs/
+reports/
+
+# Sensitive environment variables (keep .env.example)
+.env
+.env.*
+!.env.example
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/

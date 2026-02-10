@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+# @Time    : ${DATE} ${TIME}
+# @Author  : floraachy
+# @File    : ${NAME}.py
+# @Software: ${PRODUCT_NAME}
+# @Desc:
+
+
+
+import pytest
+from loguru import logger
+from config.settings import GLOBAL_VARS
+from core.requests_utils.case_dependence import CaseDependenceHandler
+
+@pytest.fixture(scope="module", autouse=True)
+def init_data():
+    """
+    运行测试之前，初始化数据;
+    运行测试之后，清理数据
+    """
+    logger.trace(f"打印一下全局变量：{GLOBAL_VARS}")
+    dependence_handler = CaseDependenceHandler(GLOBAL_VARS)
+    init_data = ${init_data}
+    logger.debug("Start ----- 开始初始化数据...")
+    if init_data.get("setup"):
+        dependence_results = dependence_handler.case_dependence_handle(
+            case_dependence=init_data["setup"],
+            db_info=GLOBAL_VARS["db_info"])
+        GLOBAL_VARS.update(dependence_results if dependence_results else {})
+    yield
+    if init_data.get("teardown"):
+        dependence_results = dependence_handler.case_dependence_handle(
+            case_dependence=init_data["teardown"],
+            db_info=GLOBAL_VARS["db_info"])
+        GLOBAL_VARS.update(dependence_results if dependence_results else {})
+
+
+    logger.debug("End ----- 初始化数据完成！")

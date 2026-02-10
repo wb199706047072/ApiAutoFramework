@@ -1,0 +1,48 @@
+image: python:3.13-slim
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  ALLURE_RESULTS_DIR: "outputs/report"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - apt-get update && apt-get install -y openjdk-17-jre-headless build-essential libssl-dev libffi-dev python3-dev
+  - python -V
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
+  - chmod +x lib/allure-*/bin/allure
+
+stages:
+  - test
+  - production
+
+test_job:
+  stage: test
+  script:
+    - echo "Running tests in TEST environment..."
+    - python run.py -env test
+  artifacts:
+    when: always
+    paths:
+      - outputs/report/
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "master"
+
+production_job:
+  stage: production
+  script:
+    - echo "Running tests in PRODUCTION/LIVE environment..."
+    - python run.py -env live
+  artifacts:
+    when: always
+    paths:
+      - outputs/report/
+    expire_in: 1 month
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "master"

@@ -1,0 +1,110 @@
+name: API Autotest CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  test-environment:
+    name: Run Tests (Test Env)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      TEST_DB_HOST: ${{ secrets.TEST_DB_HOST }}
+      TEST_DB_PORT: ${{ secrets.TEST_DB_PORT }}
+      TEST_DB_USER: ${{ secrets.TEST_DB_USER }}
+      TEST_DB_PWD: ${{ secrets.TEST_DB_PWD }}
+      TEST_DB_DATABASE: ${{ secrets.TEST_DB_DATABASE }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Prepare .env from secrets (optional)
+        run: |
+          touch .env
+          [ -n "${TEST_USERNAME}" ] && echo "TEST_USERNAME=${TEST_USERNAME}" >> .env || true
+          [ -n "${TEST_PASSWORD}" ] && echo "TEST_PASSWORD=${TEST_PASSWORD}" >> .env || true
+          [ -n "${TEST_DB_HOST}" ] && echo "TEST_DB_HOST=${TEST_DB_HOST}" >> .env || true
+          [ -n "${TEST_DB_PORT}" ] && echo "TEST_DB_PORT=${TEST_DB_PORT}" >> .env || true
+          [ -n "${TEST_DB_USER}" ] && echo "TEST_DB_USER=${TEST_DB_USER}" >> .env || true
+          [ -n "${TEST_DB_PWD}" ] && echo "TEST_DB_PWD=${TEST_DB_PWD}" >> .env || true
+          [ -n "${TEST_DB_DATABASE}" ] && echo "TEST_DB_DATABASE=${TEST_DB_DATABASE}" >> .env || true
+
+      - name: Run API Tests (Test Environment)
+        run: python run.py -env test -report no
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: outputs/report/
+          retention-days: 7
+
+  production-environment:
+    name: Run Tests (Production Env)
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    env:
+      DEMO_HOST: ${{ secrets.DEMO_HOST }}
+      DEMO_USERNAME: ${{ secrets.DEMO_USERNAME }}
+      DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
+      DEMO_DB_HOST: ${{ secrets.DEMO_DB_HOST }}
+      DEMO_DB_PORT: ${{ secrets.DEMO_DB_PORT }}
+      DEMO_DB_USER: ${{ secrets.DEMO_DB_USER }}
+      DEMO_DB_PWD: ${{ secrets.DEMO_DB_PWD }}
+      DEMO_DB_DATABASE: ${{ secrets.DEMO_DB_DATABASE }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Prepare .env from secrets (optional)
+        run: |
+          touch .env
+          [ -n "${DEMO_HOST}" ] && echo "DEMO_HOST=${DEMO_HOST}" >> .env || true
+          [ -n "${DEMO_USERNAME}" ] && echo "DEMO_USERNAME=${DEMO_USERNAME}" >> .env || true
+          [ -n "${DEMO_PASSWORD}" ] && echo "DEMO_PASSWORD=${DEMO_PASSWORD}" >> .env || true
+          [ -n "${DEMO_DB_HOST}" ] && echo "DEMO_DB_HOST=${DEMO_DB_HOST}" >> .env || true
+          [ -n "${DEMO_DB_PORT}" ] && echo "DEMO_DB_PORT=${DEMO_DB_PORT}" >> .env || true
+          [ -n "${DEMO_DB_USER}" ] && echo "DEMO_DB_USER=${DEMO_DB_USER}" >> .env || true
+          [ -n "${DEMO_DB_PWD}" ] && echo "DEMO_DB_PWD=${DEMO_DB_PWD}" >> .env || true
+          [ -n "${DEMO_DB_DATABASE}" ] && echo "DEMO_DB_DATABASE=${DEMO_DB_DATABASE}" >> .env || true
+
+      - name: Run API Tests (Production Environment)
+        # 使用 prod 环境（config/prod.yaml）
+        run: python run.py -env prod -report no
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-results
+          path: outputs/report/
+          retention-days: 30
